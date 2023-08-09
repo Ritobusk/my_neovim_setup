@@ -41,6 +41,8 @@ P.S. You can delete this when you're done too. It's your config now :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+require("Ritobusk.remap")
+
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
@@ -131,10 +133,12 @@ require('lazy').setup({
 
   {
     -- Theme inspired by Atom
+    --'rose-pine/neovim',
     'navarasu/onedark.nvim',
     priority = 1000,
     config = function()
       vim.cmd.colorscheme 'onedark'
+      --vim.cmd.colorscheme 'rose-pine'
     end,
   },
 
@@ -204,8 +208,11 @@ require('lazy').setup({
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
   { import = 'custom.plugins' },
+  {'ThePrimeagen/harpoon'},
 }, {})
 
+
+require("Ritobusk.harpoon")
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
