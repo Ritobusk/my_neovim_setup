@@ -89,7 +89,12 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
+      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {
+        ensure_installed = {
+          "pyright",
+
+        },
+      } },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
