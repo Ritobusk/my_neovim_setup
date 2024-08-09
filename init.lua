@@ -98,6 +98,15 @@ require('lazy').setup({
   },
 
   {
+    --LSP error messages only shown when hovering over with cursor
+      'dgagn/diagflow.nvim',
+      -- event = 'LspAttach', This is what I use personnally and it works great
+      opts = {
+      show_borders = true,
+    }
+  },
+
+  {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
     dependencies = {
@@ -137,12 +146,20 @@ require('lazy').setup({
 
   {
     -- Theme inspired by Atom
-    --'rose-pine/neovim',
-    'navarasu/onedark.nvim',
+    --'rose-pine/neovim', not tried
+    --'fcpg/vim-farout',
+    --"xero/miasma.nvim", not tried
+    'lmburns/kimbox',
+    --'navarasu/onedark.nvim',
+    --'uloco/bluloco.nvim', not tried
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'onedark'
+      --vim.cmd.colorscheme 'onedark'
       --vim.cmd.colorscheme 'rose-pine'
+      --vim.cmd.colorscheme 'miasma'
+      vim.cmd.colorscheme 'kimbox'
+      --vim.cmd.colorscheme 'bluloco'
+      --vim.cmd.colorscheme 'farout'
     end,
   },
 
@@ -446,6 +463,19 @@ local luasnip = require 'luasnip'
 require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup {}
 
+local function setup_diags()
+  vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+    vim.lsp.diagnostic.on_publish_diagnostics,
+    {
+      virtual_text = false,
+      signs = true,
+      update_in_insert = false,
+      underline = true,
+    }
+  )
+end
+
+
 cmp.setup {
   snippet = {
     expand = function(args)
@@ -486,6 +516,3 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
-
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
