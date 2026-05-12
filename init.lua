@@ -210,10 +210,12 @@ require('lazy').setup({
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    branch='main',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
-    build = ':TSUpdate',
+      
+      build = ':TSUpdate',
   },
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
@@ -294,15 +296,36 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
-require('nvim-treesitter.configs').setup {
-  -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'c_sharp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim' },
+init = function()
+          vim.api.nvim_create_autocmd('FileType', { 
+            callback = function() 
+              -- Enable treesitter highlighting and disable regex syntax
+              pcall(vim.treesitter.start) 
+              -- Enable treesitter-based indentation
+              vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()" 
+            end, 
+        })
+end
+
+init = function()
+  local ensureInstalled = {
+     'c', 'cpp', 'c_sharp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim',
+    -- ... your parsers
+  }
+  local alreadyInstalled = require('nvim-treesitter.config').get_installed()
+  local parsersToInstall = vim.iter(ensureInstalled)
+    :filter(function(parser)
+      return not vim.tbl_contains(alreadyInstalled, parser)
+    end)
+    :totable()
+  require('nvim-treesitter').install(parsersToInstall)
+end
+
+require('nvim-treesitter').setup {
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
 
-  highlight = { enable = true },
-  indent = { enable = true },
   incremental_selection = {
     enable = true,
     keymaps = {
@@ -377,7 +400,7 @@ capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 -- Server-specific configuration in nvim/lsp/ folder
 local lsp_servers = {
    "lua-ls",
-   "futhark-lsp",
+   -- "futhark-lsp", -- Bricked somehow...
 }
 
 -- Enables all lsp servers in nvim/lsp/
